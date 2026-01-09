@@ -23,7 +23,7 @@ namespace linktrack
 
   Init::Init(NProtocolExtracter *protocol_extraction, serial::Serial *serial) : Node("linktrack_ros2")
   {
-    this->declare_parameter("linktrack_publish_interval", 2.);
+    this->declare_parameter("linktrack_publish_interval", 0.01);
     serial_ = serial;
     protocol_extraction_ = protocol_extraction;
     initDataTransmission();
@@ -48,7 +48,7 @@ namespace linktrack
     std::cout<<"here"<<1000.*this->get_parameter("linktrack_publish_interval").as_double()<<std::endl;
     int pub_interval = (int)(1000.*(this->get_parameter("linktrack_publish_interval").as_double()));
     RCLCPP_INFO(this->get_logger(),"Parameter [linktrack_publish_interval] set to [%d] milliseconds",pub_interval);
-    serial_read_timer_ =  this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&Init::serialReadTimer, this));
+    serial_read_timer_ =  this->create_wall_timer(std::chrono::milliseconds(5), std::bind(&Init::serialReadTimer, this));
     nodeframe_publisher_ =  this->create_wall_timer(std::chrono::milliseconds(pub_interval), std::bind(&Init::nodeFramePublisher, this));
     RCLCPP_INFO(this->get_logger(),"Initialized linktrack");
   }
@@ -210,6 +210,7 @@ namespace linktrack
 
       msg_data.role = data.role;
       msg_data.id = data.id;
+      msg_data.stamp = this->now();
       msg_data.local_time = data.local_time;
       msg_data.system_time = data.system_time;
       msg_data.voltage = data.voltage;
