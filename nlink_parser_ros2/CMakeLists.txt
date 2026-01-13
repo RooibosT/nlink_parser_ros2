@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(nlink_parser_ros2)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-#add_compile_options(-std=c++11)
-add_definitions(-std=c++14)
+## C++ standard - use C++17 to match ROS2 Humble
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
